@@ -87,7 +87,7 @@ public class ItemServiceImpl implements ItemService {
         if (text != null && text.isBlank()) {
             return Collections.emptyList();
         }
-        
+
         return repository
                 .findByText(text)
                 .stream()

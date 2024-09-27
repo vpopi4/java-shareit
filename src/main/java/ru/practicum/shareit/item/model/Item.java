@@ -3,7 +3,7 @@ package ru.practicum.shareit.item.model;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
-import org.apache.catalina.connector.Request;
+import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
 @Data
@@ -24,5 +24,5 @@ public class Item {
     @NotNull
     private User owner;
 
-    private Request request;
+    private ItemRequest request;
 }

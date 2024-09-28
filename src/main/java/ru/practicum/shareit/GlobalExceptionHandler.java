@@ -17,18 +17,23 @@ import java.util.NoSuchElementException;
 @Slf4j
 public class GlobalExceptionHandler {
     private ResponseEntity<Object> buildResponseEntity(HttpStatus status, String message) {
-        return new ResponseEntity<>(Map.of("message", message), status);
+        var res = ErrorResponse.builder()
+                .status(status)
+                .message(message)
+                .build();
+
+        return new ResponseEntity<>(res, status);
     }
 
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<Object> handleNoSuchElementException(NoSuchElementException ex, WebRequest request) {
-        log.warn("Resource not found: {}", ex.getMessage());
+        log.warn("Resource not found: ", ex);
         return buildResponseEntity(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
     @ExceptionHandler(AlreadyExistsException.class)
     public ResponseEntity<Object> handleAlreadyExistsException(AlreadyExistsException ex, WebRequest request) {
-        log.warn("Resource conflict: {}", ex.getMessage());
+        log.warn("Resource conflict: ", ex);
         return buildResponseEntity(HttpStatus.CONFLICT, ex.getMessage());
     }
 
@@ -41,15 +46,20 @@ public class GlobalExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
         log.warn("Validation errors: {}", errors);
-        return new ResponseEntity<>(Map.of(
-                "message", "validation errors occurred",
-                "errors", errors
-        ), HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(
+                ErrorResponse.builder()
+                        .status(HttpStatus.BAD_REQUEST)
+                        .message("validation errors occurred")
+                        .payload(errors)
+                        .build(),
+                HttpStatus.BAD_REQUEST
+        );
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Object> handleRuntimeException(RuntimeException ex, WebRequest request) {
-        log.error("Internal server error: {}", ex.getMessage());
+        log.error("Internal server error: ", ex);
         return buildResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
     }
 }

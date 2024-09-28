@@ -24,7 +24,6 @@ public class ItemInMemoryRepository implements ItemRepository {
 
     @Override
     public List<Item> findByText(String text) {
-        System.out.println(text);
         return storage
                 .values()
                 .stream()

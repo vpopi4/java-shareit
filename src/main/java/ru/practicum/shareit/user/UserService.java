@@ -9,6 +9,7 @@ import ru.practicum.shareit.user.dto.request.UserUpdatingDto;
 import ru.practicum.shareit.user.dto.response.PublicUserDto;
 import ru.practicum.shareit.user.model.User;
 
+import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
 @Service
@@ -32,6 +33,7 @@ public class UserService {
                 .id(null)
                 .email(dto.getEmail())
                 .name(dto.getName())
+                .createdAt(LocalDateTime.now())
                 .build();
 
         return saveAndReturnDto(user);

@@ -4,6 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.AlreadyExistsException;
+import ru.practicum.shareit.user.dto.request.UserCreatingDto;
+import ru.practicum.shareit.user.dto.request.UserUpdatingDto;
+import ru.practicum.shareit.user.dto.response.PublicUserDto;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.NoSuchElementException;
 
@@ -13,29 +17,28 @@ import java.util.NoSuchElementException;
 public class UserService {
     private final UserMapper map;
     private final UserRepository storage;
-    private int seq = 0;
 
-    public UserDto.Response.PublicInfo getById(Integer id) throws NoSuchElementException {
+    public PublicUserDto getById(Integer id) throws NoSuchElementException {
         User user = storage.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("user with such id not found"));
 
-        return map.toDto(user);
+        return map.toPublicUserDto(user);
     }
 
-    public UserDto.Response.PublicInfo create(UserDto.Request.Create dto) throws AlreadyExistsException {
+    public PublicUserDto create(UserCreatingDto dto) throws AlreadyExistsException {
         checkEmailUnique(dto.getEmail());
 
-        int id = ++seq;
+        User user = User.builder()
+                .id(null)
+                .email(dto.getEmail())
+                .name(dto.getName())
+                .build();
 
-        User user = map.toUser(id, dto);
-
-        storage.save(user);
-
-        return map.toDto(user);
+        return saveAndReturnDto(user);
     }
 
-    public UserDto.Response.PublicInfo updatePartially(Integer id,
-                                                       UserDto.Request.UpdatePartially dto) throws AlreadyExistsException {
+    public PublicUserDto updatePartially(Integer id,
+                                         UserUpdatingDto dto) throws AlreadyExistsException {
         User user = storage.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("user with such id not found"));
 
@@ -50,9 +53,13 @@ public class UserService {
             user.setName(dto.getName());
         }
 
-        storage.update(user);
+        return saveAndReturnDto(user);
+    }
 
-        return map.toDto(user);
+    private PublicUserDto saveAndReturnDto(User user) {
+        User savedUser = storage.save(user);
+
+        return map.toPublicUserDto(savedUser);
     }
 
     public void deleteById(Integer id) {

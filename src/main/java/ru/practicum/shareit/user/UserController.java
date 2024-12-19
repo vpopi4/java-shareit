@@ -5,6 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.AlreadyExistsException;
+import ru.practicum.shareit.user.dto.request.UserCreatingDto;
+import ru.practicum.shareit.user.dto.request.UserUpdatingDto;
+import ru.practicum.shareit.user.dto.response.PublicUserDto;
 
 @RestController
 @RequestMapping(path = "/users")
@@ -14,18 +17,18 @@ public class UserController {
     private final UserService service;
 
     @GetMapping("/{id}")
-    public UserDto.Response.PublicInfo getById(@PathVariable Integer id) {
+    public PublicUserDto getById(@PathVariable Integer id) {
         return service.getById(id);
     }
 
     @PostMapping
-    public UserDto.Response.PublicInfo create(@Valid @RequestBody UserDto.Request.Create dto) throws AlreadyExistsException {
+    public PublicUserDto create(@Valid @RequestBody UserCreatingDto dto) throws AlreadyExistsException {
         return service.create(dto);
     }
 
     @PatchMapping("/{id}")
-    public UserDto.Response.PublicInfo updatePartially(@PathVariable Integer id,
-                                                       @Valid @RequestBody UserDto.Request.UpdatePartially dto) throws AlreadyExistsException {
+    public PublicUserDto updatePartially(@PathVariable Integer id,
+                                         @Valid @RequestBody UserUpdatingDto dto) throws AlreadyExistsException {
         return service.updatePartially(id, dto);
     }
 

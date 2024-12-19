@@ -5,6 +5,8 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
+import java.time.LocalDateTime;
+
 @Component
 public class ItemMapper {
     public Item toItem(Integer id, ItemDto.Request.Create dto, User owner) {
@@ -14,6 +16,7 @@ public class ItemMapper {
                 .description(dto.getDescription())
                 .isAvailable(dto.getAvailable())
                 .owner(owner)
+                .createdAt(LocalDateTime.now())
                 .build();
     }
 

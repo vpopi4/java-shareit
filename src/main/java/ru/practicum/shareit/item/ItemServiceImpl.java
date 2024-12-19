@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.user.model.User;
 
 import java.nio.file.AccessDeniedException;
 import java.util.Collections;
@@ -76,7 +76,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto.Response.PublicInfo> getAllByUserId(Integer userId) {
         return repository
-                .findByUserId(userId)
+                .findByOwnerId(userId)
                 .stream()
                 .map(map::toDto)
                 .toList();

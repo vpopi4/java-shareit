@@ -1,6 +1,6 @@
 package ru.practicum.shareit.util;
 
-public class AlreadyExistsException extends Exception {
+public class AlreadyExistsException extends ClientException {
     public AlreadyExistsException() {
     }
 

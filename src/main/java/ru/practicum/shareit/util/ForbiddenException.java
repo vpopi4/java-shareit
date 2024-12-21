@@ -1,6 +1,6 @@
 package ru.practicum.shareit.util;
 
-public class ForbiddenException extends Exception {
+public class ForbiddenException extends ClientException {
     public ForbiddenException() {
     }
 

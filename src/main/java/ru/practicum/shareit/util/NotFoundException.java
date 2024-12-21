@@ -1,6 +1,6 @@
 package ru.practicum.shareit.util;
 
-public class NotFoundException extends Exception {
+public class NotFoundException extends ClientException {
     public NotFoundException() {
     }
 

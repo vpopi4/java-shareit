@@ -25,6 +25,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(res, status);
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Object> handleBadRequestException(BadRequestException ex, WebRequest request) {
+        log.warn("Resource not found: ", ex);
+        return buildResponseEntity(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Object> handleNotFoundException(NotFoundException ex, WebRequest request) {
         log.warn("Resource not found: ", ex);

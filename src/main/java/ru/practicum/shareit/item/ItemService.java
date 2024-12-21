@@ -1,9 +1,8 @@
 package ru.practicum.shareit.item;
 
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.util.NotFoundException;
+import ru.practicum.shareit.util.ClientException;
 
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 public interface ItemService {
@@ -15,7 +14,7 @@ public interface ItemService {
      * @return `ItemDto.Response.PublicInfo` object
      */
     ItemDto.Response.PublicInfo createItem(Integer userId,
-                                           ItemDto.Request.Create dto) throws NotFoundException;
+                                           ItemDto.Request.Create dto) throws ClientException;
 
     /**
      * This method allows to partially update an existing `Item` by its owner.
@@ -27,7 +26,7 @@ public interface ItemService {
      */
     ItemDto.Response.PublicInfo updatePartially(Integer userId,
                                                 Integer itemId,
-                                                ItemDto.Request.UpdatePartially dto) throws AccessDeniedException, NotFoundException;
+                                                ItemDto.Request.UpdatePartially dto) throws ClientException;
 
     /**
      * This method returns a public info about the `Item`.
@@ -35,7 +34,7 @@ public interface ItemService {
      * @param itemId is an Integer extracted from the "itemId" path variable
      * @return `ItemDto.Response.PublicInfo` object
      */
-    ItemDto.Response.PublicInfo getById(Integer itemId) throws NotFoundException;
+    ItemDto.Response.PublicInfo getById(Integer itemId) throws ClientException;
 
     /**
      * This method returns a list of `Item` owned by the user.

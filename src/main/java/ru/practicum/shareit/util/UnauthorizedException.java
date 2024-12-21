@@ -1,6 +1,6 @@
 package ru.practicum.shareit.util;
 
-public class UnauthorizedException extends Exception {
+public class UnauthorizedException extends ClientException {
     public UnauthorizedException() {
     }
 

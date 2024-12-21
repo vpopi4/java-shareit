@@ -7,11 +7,11 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.util.NotFoundException;
 
 import java.nio.file.AccessDeniedException;
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 
 @Service
@@ -24,9 +24,9 @@ public class ItemServiceImpl implements ItemService {
     private int seq = 0;
 
     @Override
-    public ItemDto.Response.PublicInfo createItem(Integer userId, ItemDto.Request.Create dto) {
+    public ItemDto.Response.PublicInfo createItem(Integer userId, ItemDto.Request.Create dto) throws NotFoundException {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("user not found"));
+                .orElseThrow(() -> new NotFoundException("user not found"));
 
         Item item = map.toItem(++seq, dto, user);
 
@@ -38,11 +38,11 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto.Response.PublicInfo updatePartially(Integer userId,
                                                        Integer itemId,
-                                                       ItemDto.Request.UpdatePartially dto) throws AccessDeniedException {
+                                                       ItemDto.Request.UpdatePartially dto) throws AccessDeniedException, NotFoundException {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("user not found"));
+                .orElseThrow(() -> new NotFoundException("user not found"));
         Item item = repository.findById(itemId)
-                .orElseThrow(() -> new NoSuchElementException("item not found"));
+                .orElseThrow(() -> new NotFoundException("item not found"));
 
         if (!Objects.equals(user.getId(), item.getOwner().getId())) {
             throw new AccessDeniedException("editing denied");
@@ -66,9 +66,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto.Response.PublicInfo getById(Integer itemId) {
+    public ItemDto.Response.PublicInfo getById(Integer itemId) throws NotFoundException {
         Item item = repository.findById(itemId)
-                .orElseThrow(() -> new NoSuchElementException("item not found"));
+                .orElseThrow(() -> new NotFoundException("item not found"));
 
         return map.toDto(item);
     }

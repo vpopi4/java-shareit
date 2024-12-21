@@ -3,14 +3,14 @@ package ru.practicum.shareit.user;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.util.AlreadyExistsException;
 import ru.practicum.shareit.user.dto.request.UserCreatingDto;
 import ru.practicum.shareit.user.dto.request.UserUpdatingDto;
 import ru.practicum.shareit.user.dto.response.PublicUserDto;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.util.AlreadyExistsException;
+import ru.practicum.shareit.util.NotFoundException;
 
 import java.time.LocalDateTime;
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -19,9 +19,9 @@ public class UserService {
     private final UserMapper map;
     private final UserRepository storage;
 
-    public PublicUserDto getById(Integer id) throws NoSuchElementException {
+    public PublicUserDto getById(Integer id) throws NotFoundException {
         User user = storage.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("user with such id not found"));
+                .orElseThrow(() -> new NotFoundException("user with such id not found"));
 
         return map.toPublicUserDto(user);
     }
@@ -40,9 +40,9 @@ public class UserService {
     }
 
     public PublicUserDto updatePartially(Integer id,
-                                         UserUpdatingDto dto) throws AlreadyExistsException {
+                                         UserUpdatingDto dto) throws AlreadyExistsException, NotFoundException {
         User user = storage.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("user with such id not found"));
+                .orElseThrow(() -> new NotFoundException("user with such id not found"));
 
         String email = dto.getEmail();
 

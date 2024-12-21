@@ -4,10 +4,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.util.AlreadyExistsException;
 import ru.practicum.shareit.user.dto.request.UserCreatingDto;
 import ru.practicum.shareit.user.dto.request.UserUpdatingDto;
 import ru.practicum.shareit.user.dto.response.PublicUserDto;
+import ru.practicum.shareit.util.AlreadyExistsException;
+import ru.practicum.shareit.util.NotFoundException;
 
 @RestController
 @RequestMapping(path = "/users")
@@ -17,7 +18,7 @@ public class UserController {
     private final UserService service;
 
     @GetMapping("/{id}")
-    public PublicUserDto getById(@PathVariable Integer id) {
+    public PublicUserDto getById(@PathVariable Integer id) throws NotFoundException {
         return service.getById(id);
     }
 
@@ -27,8 +28,10 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public PublicUserDto updatePartially(@PathVariable Integer id,
-                                         @Valid @RequestBody UserUpdatingDto dto) throws AlreadyExistsException {
+    public PublicUserDto updatePartially(
+            @PathVariable Integer id,
+            @Valid @RequestBody UserUpdatingDto dto
+    ) throws AlreadyExistsException, NotFoundException {
         return service.updatePartially(id, dto);
     }
 

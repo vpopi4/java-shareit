@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Value;
-import ru.practicum.shareit.NotBlankIfNotNull;
+import ru.practicum.shareit.util.NotBlankIfNotNull;
 
 public class ItemDto {
     public static class Request {

@@ -22,14 +22,13 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository repository;
     private final UserRepository userRepository;
     private final ItemMapper map;
-    private int seq = 0;
 
     @Override
     public ItemDto.Response.PublicInfo createItem(Integer userId, ItemDto.Request.Create dto) throws ClientException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("user not found"));
 
-        Item item = map.toItem(++seq, dto, user);
+        Item item = map.toItem(dto, user);
 
         repository.save(item);
 

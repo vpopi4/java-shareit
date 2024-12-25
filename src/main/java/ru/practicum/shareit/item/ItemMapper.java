@@ -9,9 +9,9 @@ import java.time.LocalDateTime;
 
 @Component
 public class ItemMapper {
-    public Item toItem(Integer id, ItemDto.Request.Create dto, User owner) {
+    public Item toItem(ItemDto.Request.Create dto, User owner) {
         return Item.builder()
-                .id(id)
+                .id(null)
                 .name(dto.getName())
                 .description(dto.getDescription())
                 .isAvailable(dto.getAvailable())

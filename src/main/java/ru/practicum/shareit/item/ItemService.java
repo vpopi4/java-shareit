@@ -1,5 +1,7 @@
 package ru.practicum.shareit.item;
 
+import ru.practicum.shareit.item.dto.CommentCreationDto;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.util.ClientException;
 
@@ -52,4 +54,6 @@ public interface ItemService {
      * @return list of `ItemDto.Response.PublicInfo`
      */
     List<ItemDto.Response.PublicInfo> search(String text);
+
+    CommentDto postComment(Integer userId, Integer itemId, CommentCreationDto dto) throws ClientException;
 }

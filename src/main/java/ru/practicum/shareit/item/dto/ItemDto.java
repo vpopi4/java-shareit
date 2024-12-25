@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Value;
 import ru.practicum.shareit.util.NotBlankIfNotNull;
 
+import java.util.List;
+
 public class ItemDto {
     public static class Request {
         @Value
@@ -35,6 +37,7 @@ public class ItemDto {
             String name;
             String description;
             Boolean available;
+            List<CommentDto> comments;
         }
     }
 }

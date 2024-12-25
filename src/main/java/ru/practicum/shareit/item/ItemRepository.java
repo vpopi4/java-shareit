@@ -6,9 +6,18 @@ import org.springframework.data.repository.query.Param;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ItemRepository extends JpaRepository<Item, Integer> {
-    List<Item> findByOwnerId(Integer ownerId);
+    @Query("SELECT i FROM Item i " +
+            "LEFT JOIN FETCH i.comments " +
+            "WHERE i.id = :itemId")
+    Optional<Item> findByIdWithComments(@Param("itemId") Integer itemId);
+
+    @Query("SELECT i FROM Item i " +
+            "LEFT JOIN FETCH i.comments " +
+            "WHERE i.owner.id = :ownerId")
+    List<Item> findByOwnerId(@Param("ownerId") Integer ownerId);
 
     @Query("SELECT i FROM Item i " +
             "WHERE i.isAvailable = true " +

@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentCreationDto;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.util.ClientException;
 
@@ -81,6 +83,23 @@ public class ItemController {
         List<ItemDto.Response.PublicInfo> response = service.search(text);
 
         log.info("GET /items/search?{}: response body={}", text, response);
+
+        return response;
+    }
+
+    //
+    @PostMapping("/{itemId}/comment")
+    public CommentDto postComment(
+            @RequestHeader("X-Sharer-User-Id") Integer userId,
+            @PathVariable("itemId") Integer itemId,
+            @Valid @RequestBody CommentCreationDto dto
+    ) throws ClientException {
+        log.info("--> POST /items/{}/comment: posting a comment: " +
+                "X-Sharer-User-Id={}, body={}", itemId, userId, dto);
+
+        CommentDto response = service.postComment(userId, itemId, dto);
+
+        log.info("<-- POST /items/{}/comment: response body={}", itemId, response);
 
         return response;
     }

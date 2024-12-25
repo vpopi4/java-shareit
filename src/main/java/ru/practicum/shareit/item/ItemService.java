@@ -42,9 +42,9 @@ public interface ItemService {
      * This method returns a list of `Item` owned by the user.
      *
      * @param userId is an Integer extracted from the "X-Sharer-User-Id" request header
-     * @return list of `ItemDto.Response.PublicInfo`
+     * @return list of `ItemDto.Response.PrivateInfo`
      */
-    List<ItemDto.Response.PublicInfo> getAllByUserId(Integer userId);
+    List<ItemDto.Response.PrivateInfo> getAllByUserId(Integer userId);
 
     /**
      * This method returns available for booking list of `Item`

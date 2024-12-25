@@ -64,12 +64,12 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto.Response.PublicInfo> getAllByUserId(
+    public List<ItemDto.Response.PrivateInfo> getAllByUserId(
             @RequestHeader("X-Sharer-User-Id") Integer userId
     ) {
         log.info("GET /items: X-Sharer-User-Id={}", userId);
 
-        List<ItemDto.Response.PublicInfo> response = service.getAllByUserId(userId);
+        List<ItemDto.Response.PrivateInfo> response = service.getAllByUserId(userId);
 
         log.info("GET /items: body={}", response);
 

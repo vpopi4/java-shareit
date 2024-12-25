@@ -14,7 +14,7 @@ public class BookingDto {
     Integer id;
     LocalDateTime start;
     LocalDateTime end;
-    ItemDto.Response.PublicInfo item;
+    ItemDto.Response.ShortPublicInfo item;
     PublicUserDto booker;
     BookingStatus status;
     LocalDateTime createdAt;

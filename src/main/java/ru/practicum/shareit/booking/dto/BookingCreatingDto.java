@@ -1,6 +1,5 @@
 package ru.practicum.shareit.booking.dto;
 
-import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Value;
@@ -11,11 +10,11 @@ import java.time.LocalDateTime;
 @Builder
 public class BookingCreatingDto {
     @NotNull
-    @Future
+//    @Future
     LocalDateTime start;
 
     @NotNull
-    @Future
+//    @Future
     LocalDateTime end;
 
     @NotNull

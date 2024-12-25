@@ -12,7 +12,10 @@ import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.util.*;
+import ru.practicum.shareit.util.BadRequestException;
+import ru.practicum.shareit.util.ClientException;
+import ru.practicum.shareit.util.ForbiddenException;
+import ru.practicum.shareit.util.NotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,8 +30,12 @@ public class BookingServiceImpl implements BookingService {
     private final BookingMapper map;
 
     @Override
-    public BookingDto createItem(Integer userId,
-                                 BookingCreatingDto dto) throws ClientException {
+    public BookingDto createBooking(Integer userId,
+                                    BookingCreatingDto dto) throws ClientException {
+        if (!dto.getEnd().isAfter(dto.getStart())) {
+            throw new BadRequestException("Incorrect date range");
+        }
+
         User user = authorize(userId);
         Item item = itemRepository.findById(dto.getItemId())
                 .orElseThrow(() -> new NotFoundException("Item with such id not found"));
@@ -38,11 +45,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         if (!item.getIsAvailable()) {
-            throw new ForbiddenException("Booking is not available now");
-        }
-
-        if (!dto.getEnd().isAfter(dto.getStart())) {
-            throw new BadRequestException("Incorrect date range");
+            throw new BadRequestException("Item is not available for booking");
         }
 
         Booking booking = Booking.builder()
@@ -96,9 +99,9 @@ public class BookingServiceImpl implements BookingService {
         return saveAndReturnDto(booking);
     }
 
-    private User authorize(Integer userId) throws UnauthorizedException {
+    private User authorize(Integer userId) throws ClientException {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new UnauthorizedException("User with such id not found"));
+                .orElseThrow(() -> new ForbiddenException("User with such id not found"));
     }
 
     private BookingDto saveAndReturnDto(Booking booking) {

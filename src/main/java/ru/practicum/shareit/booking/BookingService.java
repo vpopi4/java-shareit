@@ -9,8 +9,8 @@ import java.util.List;
 
 public interface BookingService {
 
-    BookingDto createItem(Integer userId,
-                          BookingCreatingDto dto) throws ClientException;
+    BookingDto createBooking(Integer userId,
+                             BookingCreatingDto dto) throws ClientException;
 
     BookingDto approveOrRejectBooking(Integer userId,
                                       Integer bookingId,

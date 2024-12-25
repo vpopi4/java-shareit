@@ -19,7 +19,7 @@ public class BookingController {
     private final BookingService service;
 
     @PostMapping
-    public BookingDto createItem(
+    public BookingDto createBooking(
             @RequestHeader("X-Sharer-User-Id") Integer userId,
             @Valid @RequestBody BookingCreatingDto dto
     ) throws ClientException {
@@ -66,7 +66,7 @@ public class BookingController {
     @GetMapping
     public List<BookingDto> getBookingsByBooker(
             @RequestHeader("X-Sharer-User-Id") Integer userId,
-            @RequestParam("state") String state
+            @RequestParam(value = "state", required = false) String state
     ) throws ClientException {
         log.info("GET /bookings: getting bookings by booker and state: " +
                 "X-Sharer-User-Id={}, state={}", userId, state);
@@ -81,7 +81,7 @@ public class BookingController {
     @GetMapping("/owner")
     public List<BookingDto> getBookingsByOwner(
             @RequestHeader("X-Sharer-User-Id") Integer userId,
-            @RequestParam("state") String state
+            @RequestParam(value = "state", required = false) String state
     ) throws ClientException {
         log.info("GET /bookings/owner: getting bookings by owner and state: " +
                 "X-Sharer-User-Id={}, state={}", userId, state);

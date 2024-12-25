@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
@@ -36,9 +38,13 @@ public class BookingServiceImpl implements BookingService {
             throw new BadRequestException("Incorrect date range");
         }
 
-//        if (dto.getStart().isBefore(LocalDateTime.now())) {
-//            throw new BadRequestException("Incorrect date range");
-//        }
+        if (dto.getStart().isBefore(LocalDateTime.now().minusMinutes(1))) {
+            throw new BadRequestException("Incorrect date range");
+        }
+
+        if (dto.getEnd().isBefore(LocalDateTime.now().minusMinutes(1))) {
+            throw new BadRequestException("Incorrect date range");
+        }
 
         User user = authorize(userId);
         Item item = itemRepository.findById(dto.getItemId())

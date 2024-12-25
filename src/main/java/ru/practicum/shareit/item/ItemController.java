@@ -21,6 +21,9 @@ public class ItemController {
             @RequestHeader("X-Sharer-User-Id") Integer userId,
             @Valid @RequestBody ItemDto.Request.Create dto
     ) throws ClientException {
+        log.info("POST /items: creating item: " +
+                "X-Sharer-User-Id={}, body={}", userId, dto);
+
         return service.createItem(userId, dto);
     }
 
@@ -30,6 +33,9 @@ public class ItemController {
             @PathVariable Integer itemId,
             @Valid @RequestBody ItemDto.Request.UpdatePartially dto
     ) throws ClientException {
+        log.info("PATCH /items/{}: editing item: " +
+                "X-Sharer-User-Id={}, body={}", itemId, userId, dto);
+
         return service.updatePartially(userId, itemId, dto);
     }
 
@@ -38,6 +44,8 @@ public class ItemController {
             @RequestHeader("X-Sharer-User-Id") Integer userId,
             @PathVariable Integer itemId
     ) throws ClientException {
+        log.info("GET /items/{}: X-Sharer-User-Id={}", itemId, userId);
+
         return service.getById(itemId);
     }
 
@@ -45,11 +53,15 @@ public class ItemController {
     public List<ItemDto.Response.PublicInfo> getAllByUserId(
             @RequestHeader("X-Sharer-User-Id") Integer userId
     ) {
+        log.info("GET /items: X-Sharer-User-Id={}", userId);
+
         return service.getAllByUserId(userId);
     }
 
     @GetMapping("/search")
     public List<ItemDto.Response.PublicInfo> search(@RequestParam("text") String text) {
+        log.info("GET /items/search?{}", text);
+
         return service.search(text);
     }
 }

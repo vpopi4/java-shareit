@@ -18,11 +18,15 @@ public class UserController {
 
     @GetMapping("/{id}")
     public PublicUserDto getById(@PathVariable Integer id) throws ClientException {
+        log.info("GET /users/{}: getting by user id", id);
+
         return service.getById(id);
     }
 
     @PostMapping
     public PublicUserDto create(@Valid @RequestBody UserCreatingDto dto) throws ClientException {
+        log.info("POST /users: creating user: body={}", dto);
+
         return service.create(dto);
     }
 
@@ -31,11 +35,15 @@ public class UserController {
             @PathVariable Integer id,
             @Valid @RequestBody UserUpdatingDto dto
     ) throws ClientException {
+        log.info("PATCH /users/{}: editing user: body={}", id, dto);
+
         return service.updatePartially(id, dto);
     }
 
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Integer id) {
+        log.info("DELETE /users/{}: deleting user", id);
+
         service.deleteById(id);
     }
 }

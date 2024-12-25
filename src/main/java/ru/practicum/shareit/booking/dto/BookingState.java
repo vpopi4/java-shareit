@@ -11,7 +11,7 @@ public enum BookingState {
     public static BookingState parseString(String string) {
         try {
             return BookingState.valueOf(string);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | NullPointerException e) {
             return BookingState.ALL;
         }
     }

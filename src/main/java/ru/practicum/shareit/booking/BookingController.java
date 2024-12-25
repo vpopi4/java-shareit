@@ -26,7 +26,11 @@ public class BookingController {
         log.info("POST /bookings: creating booking: " +
                 "X-Sharer-User-Id={}, body={}", userId, dto);
 
-        return service.createItem(userId, dto);
+        BookingDto response = service.createBooking(userId, dto);
+
+        log.info("POST /bookings: response body={}", response);
+
+        return response;
     }
 
     @PatchMapping("/{bookingId}")
@@ -38,7 +42,11 @@ public class BookingController {
         log.info("PATCH /bookings/{}: approving or rejecting booking: " +
                 "X-Sharer-User-Id={}, isApproved={}", bookingId, userId, isApproved);
 
-        return service.approveOrRejectBooking(userId, bookingId, isApproved);
+        BookingDto response = service.approveOrRejectBooking(userId, bookingId, isApproved);
+
+        log.info("PATCH /bookings/{}: response body={}", bookingId, response);
+
+        return response;
     }
 
     @GetMapping("/{bookingId}")
@@ -48,7 +56,11 @@ public class BookingController {
     ) throws ClientException {
         log.info("GET /bookings/{}: X-Sharer-User-Id={}", bookingId, userId);
 
-        return service.getBooking(userId, bookingId);
+        BookingDto response = service.getBooking(userId, bookingId);
+
+        log.info("GET /bookings/{}: response body={}", bookingId, response);
+
+        return response;
     }
 
     @GetMapping
@@ -59,7 +71,11 @@ public class BookingController {
         log.info("GET /bookings: getting bookings by booker and state: " +
                 "X-Sharer-User-Id={}, state={}", userId, state);
 
-        return service.getBookingsByBooker(userId, BookingState.parseString(state));
+        List<BookingDto> response = service.getBookingsByBooker(userId, BookingState.parseString(state));
+
+        log.info("GET /bookings: response body={}", response);
+
+        return response;
     }
 
     @GetMapping("/owner")
@@ -70,6 +86,10 @@ public class BookingController {
         log.info("GET /bookings/owner: getting bookings by owner and state: " +
                 "X-Sharer-User-Id={}, state={}", userId, state);
 
-        return service.getBookingsByOwner(userId, BookingState.parseString(state));
+        List<BookingDto> response = service.getBookingsByOwner(userId, BookingState.parseString(state));
+
+        log.info("GET /bookings/owner: response body={}", response);
+
+        return response;
     }
 }

@@ -24,7 +24,11 @@ public class ItemController {
         log.info("POST /items: creating item: " +
                 "X-Sharer-User-Id={}, body={}", userId, dto);
 
-        return service.createItem(userId, dto);
+        ItemDto.Response.PublicInfo response = service.createItem(userId, dto);
+
+        log.info("POST /items: response body={}", response);
+
+        return response;
     }
 
     @PatchMapping("/{itemId}")
@@ -36,7 +40,11 @@ public class ItemController {
         log.info("PATCH /items/{}: editing item: " +
                 "X-Sharer-User-Id={}, body={}", itemId, userId, dto);
 
-        return service.updatePartially(userId, itemId, dto);
+        ItemDto.Response.PublicInfo response = service.updatePartially(userId, itemId, dto);
+
+        log.info("PATCH /items/{}: response body={}", itemId, response);
+
+        return response;
     }
 
     @GetMapping("/{itemId}")
@@ -46,7 +54,11 @@ public class ItemController {
     ) throws ClientException {
         log.info("GET /items/{}: X-Sharer-User-Id={}", itemId, userId);
 
-        return service.getById(itemId);
+        ItemDto.Response.PublicInfo response = service.getById(itemId);
+
+        log.info("GET /items/{}: response body={}", itemId, response);
+
+        return response;
     }
 
     @GetMapping
@@ -55,13 +67,21 @@ public class ItemController {
     ) {
         log.info("GET /items: X-Sharer-User-Id={}", userId);
 
-        return service.getAllByUserId(userId);
+        List<ItemDto.Response.PublicInfo> response = service.getAllByUserId(userId);
+
+        log.info("GET /items: body={}", response);
+
+        return response;
     }
 
     @GetMapping("/search")
     public List<ItemDto.Response.PublicInfo> search(@RequestParam("text") String text) {
         log.info("GET /items/search?{}", text);
 
-        return service.search(text);
+        List<ItemDto.Response.PublicInfo> response = service.search(text);
+
+        log.info("GET /items/search?{}: response body={}", text, response);
+
+        return response;
     }
 }

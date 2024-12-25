@@ -1,4 +1,4 @@
-package ru.practicum.shareit;
+package ru.practicum.shareit.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,6 +23,30 @@ public class GlobalExceptionHandler {
                 .build();
 
         return new ResponseEntity<>(res, status);
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Object> handleBadRequestException(BadRequestException ex, WebRequest request) {
+        log.warn("Resource not found: ", ex);
+        return buildResponseEntity(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<Object> handleNotFoundException(NotFoundException ex, WebRequest request) {
+        log.warn("Resource not found: ", ex);
+        return buildResponseEntity(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<Object> handleForbiddenException(ForbiddenException ex, WebRequest request) {
+        log.warn("Resource not found: ", ex);
+        return buildResponseEntity(HttpStatus.FORBIDDEN, ex.getMessage());
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<Object> handleUnauthorizedException(UnauthorizedException ex, WebRequest request) {
+        log.warn("Resource not found: ", ex);
+        return buildResponseEntity(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
 
     @ExceptionHandler(NoSuchElementException.class)

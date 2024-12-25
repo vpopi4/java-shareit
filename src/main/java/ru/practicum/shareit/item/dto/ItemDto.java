@@ -4,7 +4,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Value;
-import ru.practicum.shareit.NotBlankIfNotNull;
+import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.util.NotBlankIfNotNull;
+
+import java.util.List;
 
 public class ItemDto {
     public static class Request {
@@ -29,8 +32,32 @@ public class ItemDto {
 
     public static class Response {
         @Value
-        @Builder
+        @Builder(toBuilder = true)
         public static class PublicInfo {
+            Integer id;
+            String name;
+            String description;
+            Boolean available;
+            List<CommentDto> comments;
+            BookingDto lastBooking;
+            BookingDto nextBooking;
+        }
+
+        @Value
+        @Builder(toBuilder = true)
+        public static class PrivateInfo {
+            Integer id;
+            String name;
+            String description;
+            Boolean available;
+            List<CommentDto> comments;
+            BookingDto lastBooking;
+            BookingDto nextBooking;
+        }
+
+        @Value
+        @Builder
+        public static class ShortPublicInfo {
             Integer id;
             String name;
             String description;

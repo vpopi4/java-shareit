@@ -17,24 +17,14 @@ public class UserController {
 
     @GetMapping("/{id}")
     public PublicUserDto getById(@PathVariable Integer id) throws ClientException {
-        log.info("GET /users/{}: getting by user id", id);
-
-        PublicUserDto response = service.getById(id);
-
-        log.info("GET /users/{}: response body={}", id, response);
-
-        return response;
+        return service.getById(id);
     }
 
     @PostMapping
     public PublicUserDto create(@RequestBody UserCreatingDto dto) throws ClientException {
-        log.info("POST /users: creating user: body={}", dto);
+        log.info("---> Creating user: body={}", dto);
 
-        PublicUserDto response = service.create(dto);
-
-        log.info("POST /users: response body={}", response);
-
-        return response;
+        return service.create(dto);
     }
 
     @PatchMapping("/{id}")
@@ -42,18 +32,14 @@ public class UserController {
             @PathVariable Integer id,
             @RequestBody UserUpdatingDto dto
     ) throws ClientException {
-        log.info("PATCH /users/{}: editing user: body={}", id, dto);
+        log.info("---> Editing user[id={}]: body={}", id, dto);
 
-        PublicUserDto response = service.updatePartially(id, dto);
-
-        log.info("PATCH /users/{}: response body={}", id, response);
-
-        return response;
+        return service.updatePartially(id, dto);
     }
 
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Integer id) {
-        log.info("DELETE /users/{}: deleting user", id);
+        log.info("---> Deleting user[id={}]", id);
 
         service.deleteById(id);
     }

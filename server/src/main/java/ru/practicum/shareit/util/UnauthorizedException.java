@@ -1,5 +1,7 @@
 package ru.practicum.shareit.util;
 
+import org.springframework.http.HttpStatus;
+
 public class UnauthorizedException extends ClientException {
     public UnauthorizedException() {
     }
@@ -18,5 +20,10 @@ public class UnauthorizedException extends ClientException {
 
     public UnauthorizedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
+    }
+
+    @Override
+    public HttpStatus getHttpStatus() {
+        return HttpStatus.UNAUTHORIZED;
     }
 }

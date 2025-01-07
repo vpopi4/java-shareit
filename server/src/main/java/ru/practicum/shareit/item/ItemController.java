@@ -23,14 +23,9 @@ public class ItemController {
             @RequestHeader("X-Sharer-User-Id") Integer userId,
             @RequestBody ItemCreatingOrUpdatingDto dto
     ) throws ClientException {
-        log.info("POST /items: creating item: " +
-                "X-Sharer-User-Id={}, body={}", userId, dto);
+        log.info("---> Creating item: userId={}, body={}", userId, dto);
 
-        ItemPublicDto response = service.createItem(userId, dto);
-
-        log.info("POST /items: response body={}", response);
-
-        return response;
+        return service.createItem(userId, dto);
     }
 
     @PatchMapping("/{itemId}")
@@ -39,14 +34,9 @@ public class ItemController {
             @PathVariable Integer itemId,
             @RequestBody ItemCreatingOrUpdatingDto dto
     ) throws ClientException {
-        log.info("PATCH /items/{}: editing item: " +
-                "X-Sharer-User-Id={}, body={}", itemId, userId, dto);
+        log.info("---> Editing item[id={}]: userId={}, body={}", itemId, userId, dto);
 
-        ItemPublicDto response = service.updatePartially(userId, itemId, dto);
-
-        log.info("PATCH /items/{}: response body={}", itemId, response);
-
-        return response;
+        return service.updatePartially(userId, itemId, dto);
     }
 
     @GetMapping("/{itemId}")
@@ -54,53 +44,29 @@ public class ItemController {
             @RequestHeader("X-Sharer-User-Id") Integer userId,
             @PathVariable Integer itemId
     ) throws ClientException {
-        log.info("GET /items/{}: X-Sharer-User-Id={}", itemId, userId);
-
-        ItemPublicDto response = service.getById(itemId);
-
-        log.info("GET /items/{}: response body={}", itemId, response);
-
-        return response;
+        return service.getById(itemId);
     }
 
     @GetMapping
     public List<ItemPublicDto> getAllByUserId(
             @RequestHeader("X-Sharer-User-Id") Integer userId
     ) {
-        log.info("GET /items: X-Sharer-User-Id={}", userId);
-
-        List<ItemPublicDto> response = service.getAllByUserId(userId);
-
-        log.info("GET /items: body={}", response);
-
-        return response;
+        return service.getAllByUserId(userId);
     }
 
     @GetMapping("/search")
     public List<ItemPublicDto> search(@RequestParam("text") String text) {
-        log.info("GET /items/search?{}", text);
-
-        List<ItemPublicDto> response = service.search(text);
-
-        log.info("GET /items/search?{}: response body={}", text, response);
-
-        return response;
+        return service.search(text);
     }
 
-    //
     @PostMapping("/{itemId}/comment")
     public CommentDto postComment(
             @RequestHeader("X-Sharer-User-Id") Integer userId,
             @PathVariable("itemId") Integer itemId,
             @RequestBody CommentCreationDto dto
     ) throws ClientException {
-        log.info("--> POST /items/{}/comment: posting a comment: " +
-                "X-Sharer-User-Id={}, body={}", itemId, userId, dto);
+        log.info("---> Posting a comment to item[id={}]: userId={}, body={}", itemId, userId, dto);
 
-        CommentDto response = service.postComment(userId, itemId, dto);
-
-        log.info("<-- POST /items/{}/comment: response body={}", itemId, response);
-
-        return response;
+        return service.postComment(userId, itemId, dto);
     }
 }

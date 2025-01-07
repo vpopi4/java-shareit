@@ -10,7 +10,8 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.dto.CommentCreationDto;
 import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemCreatingOrUpdatingDto;
+import ru.practicum.shareit.item.dto.ItemPublicDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
@@ -39,7 +40,7 @@ public class ItemServiceImpl implements ItemService {
     private final BookingMapper bookingMapper;
 
     @Override
-    public ItemDto.Response.PublicInfo createItem(Integer userId, ItemDto.Request.Create dto) throws ClientException {
+    public ItemPublicDto createItem(Integer userId, ItemCreatingOrUpdatingDto dto) throws ClientException {
         User user = findUser(userId);
 
         Item item = map.toItem(dto, user);
@@ -50,9 +51,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto.Response.PublicInfo updatePartially(Integer userId,
-                                                       Integer itemId,
-                                                       ItemDto.Request.UpdatePartially dto) throws ClientException {
+    public ItemPublicDto updatePartially(Integer userId,
+                                         Integer itemId,
+                                         ItemCreatingOrUpdatingDto dto) throws ClientException {
         User user = findUser(userId);
         Item item = findItem(itemId);
 
@@ -78,7 +79,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto.Response.PublicInfo getById(Integer itemId) throws ClientException {
+    public ItemPublicDto getById(Integer itemId) throws ClientException {
         Item item = repository.findByIdWithComments(itemId)
                 .orElseThrow(() -> new NotFoundException("item not found"));
 
@@ -86,7 +87,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto.Response.PrivateInfo> getAllByUserId(Integer userId) {
+    public List<ItemPublicDto> getAllByUserId(Integer userId) {
         List<Item> items = repository.findByOwnerId(userId);
 
         return items.stream().map(item -> {
@@ -100,12 +101,12 @@ public class ItemServiceImpl implements ItemService {
                     ? bookingMapper.toBookingDto(nextBooking)
                     : null;
 
-            return map.toPrivateDto(item, lastBookingDto, nextBookingDto);
+            return map.toDto(item, lastBookingDto, nextBookingDto);
         }).collect(Collectors.toList());
     }
 
     @Override
-    public List<ItemDto.Response.PublicInfo> search(String text) {
+    public List<ItemPublicDto> search(String text) {
         if (text != null && text.isBlank()) {
             return Collections.emptyList();
         }

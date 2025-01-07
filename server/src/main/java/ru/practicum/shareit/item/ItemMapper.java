@@ -2,8 +2,7 @@ package ru.practicum.shareit.item;
 
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
@@ -12,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Component
 public class ItemMapper {
-    public Item toItem(ItemDto.Request.Create dto, User owner) {
+    public Item toItem(ItemCreatingOrUpdatingDto dto, User owner) {
         return Item.builder()
                 .id(null)
                 .name(dto.getName())
@@ -23,30 +22,17 @@ public class ItemMapper {
                 .build();
     }
 
-    public ItemDto.Response.PublicInfo toDto(Item item) {
-        return ItemDto.Response.PublicInfo.builder()
-                .id(item.getId())
-                .name(item.getName())
-                .description(item.getDescription())
-                .available(item.getIsAvailable())
-                .comments(item.getComments() == null
-                        ? null
-                        : item.getComments()
-                        .stream()
-                        .map(this::toCommentDto)
-                        .toList())
-                .build();
+    public ItemPublicDto toDto(Item item) {
+        return toDto(item, null, null);
     }
 
-    public ItemDto.Response.PrivateInfo toPrivateDto(Item item, BookingDto last, BookingDto next) {
-        return ItemDto.Response.PrivateInfo.builder()
+    public ItemPublicDto toDto(Item item, BookingDto last, BookingDto next) {
+        return ItemPublicDto.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getIsAvailable())
-                .comments(item.getComments() == null
-                        ? null
-                        : item.getComments()
+                .comments(item.getComments()
                         .stream()
                         .map(this::toCommentDto)
                         .toList())
@@ -55,8 +41,8 @@ public class ItemMapper {
                 .build();
     }
 
-    public ItemDto.Response.ShortPublicInfo toShortDto(Item item) {
-        return ItemDto.Response.ShortPublicInfo.builder()
+    public ItemShortDto toShortDto(Item item) {
+        return ItemShortDto.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())

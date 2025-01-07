@@ -9,6 +9,7 @@ import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -44,4 +45,8 @@ public class Item {
 
     @OneToMany(mappedBy = "item", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Comment> comments;
+
+    public List<Comment> getComments() {
+        return comments != null ? comments : Collections.emptyList();
+    }
 }

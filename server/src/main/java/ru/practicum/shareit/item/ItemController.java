@@ -1,12 +1,12 @@
 package ru.practicum.shareit.item;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentCreationDto;
 import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemCreatingOrUpdatingDto;
+import ru.practicum.shareit.item.dto.ItemPublicDto;
 import ru.practicum.shareit.util.ClientException;
 
 import java.util.List;
@@ -19,14 +19,14 @@ public class ItemController {
     private final ItemService service;
 
     @PostMapping
-    public ItemDto.Response.PublicInfo createItem(
+    public ItemPublicDto createItem(
             @RequestHeader("X-Sharer-User-Id") Integer userId,
-            @Valid @RequestBody ItemDto.Request.Create dto
+            @RequestBody ItemCreatingOrUpdatingDto dto
     ) throws ClientException {
         log.info("POST /items: creating item: " +
                 "X-Sharer-User-Id={}, body={}", userId, dto);
 
-        ItemDto.Response.PublicInfo response = service.createItem(userId, dto);
+        ItemPublicDto response = service.createItem(userId, dto);
 
         log.info("POST /items: response body={}", response);
 
@@ -34,15 +34,15 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto.Response.PublicInfo updatePartially(
+    public ItemPublicDto updatePartially(
             @RequestHeader("X-Sharer-User-Id") Integer userId,
             @PathVariable Integer itemId,
-            @Valid @RequestBody ItemDto.Request.UpdatePartially dto
+            @RequestBody ItemCreatingOrUpdatingDto dto
     ) throws ClientException {
         log.info("PATCH /items/{}: editing item: " +
                 "X-Sharer-User-Id={}, body={}", itemId, userId, dto);
 
-        ItemDto.Response.PublicInfo response = service.updatePartially(userId, itemId, dto);
+        ItemPublicDto response = service.updatePartially(userId, itemId, dto);
 
         log.info("PATCH /items/{}: response body={}", itemId, response);
 
@@ -50,13 +50,13 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto.Response.PublicInfo getById(
+    public ItemPublicDto getById(
             @RequestHeader("X-Sharer-User-Id") Integer userId,
             @PathVariable Integer itemId
     ) throws ClientException {
         log.info("GET /items/{}: X-Sharer-User-Id={}", itemId, userId);
 
-        ItemDto.Response.PublicInfo response = service.getById(itemId);
+        ItemPublicDto response = service.getById(itemId);
 
         log.info("GET /items/{}: response body={}", itemId, response);
 
@@ -64,12 +64,12 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto.Response.PrivateInfo> getAllByUserId(
+    public List<ItemPublicDto> getAllByUserId(
             @RequestHeader("X-Sharer-User-Id") Integer userId
     ) {
         log.info("GET /items: X-Sharer-User-Id={}", userId);
 
-        List<ItemDto.Response.PrivateInfo> response = service.getAllByUserId(userId);
+        List<ItemPublicDto> response = service.getAllByUserId(userId);
 
         log.info("GET /items: body={}", response);
 
@@ -77,10 +77,10 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto.Response.PublicInfo> search(@RequestParam("text") String text) {
+    public List<ItemPublicDto> search(@RequestParam("text") String text) {
         log.info("GET /items/search?{}", text);
 
-        List<ItemDto.Response.PublicInfo> response = service.search(text);
+        List<ItemPublicDto> response = service.search(text);
 
         log.info("GET /items/search?{}: response body={}", text, response);
 
@@ -92,7 +92,7 @@ public class ItemController {
     public CommentDto postComment(
             @RequestHeader("X-Sharer-User-Id") Integer userId,
             @PathVariable("itemId") Integer itemId,
-            @Valid @RequestBody CommentCreationDto dto
+            @RequestBody CommentCreationDto dto
     ) throws ClientException {
         log.info("--> POST /items/{}/comment: posting a comment: " +
                 "X-Sharer-User-Id={}, body={}", itemId, userId, dto);

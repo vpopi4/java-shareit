@@ -1,6 +1,5 @@
 package ru.practicum.shareit.user;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +27,7 @@ public class UserController {
     }
 
     @PostMapping
-    public PublicUserDto create(@Valid @RequestBody UserCreatingDto dto) throws ClientException {
+    public PublicUserDto create(@RequestBody UserCreatingDto dto) throws ClientException {
         log.info("POST /users: creating user: body={}", dto);
 
         PublicUserDto response = service.create(dto);
@@ -41,7 +40,7 @@ public class UserController {
     @PatchMapping("/{id}")
     public PublicUserDto updatePartially(
             @PathVariable Integer id,
-            @Valid @RequestBody UserUpdatingDto dto
+            @RequestBody UserUpdatingDto dto
     ) throws ClientException {
         log.info("PATCH /users/{}: editing user: body={}", id, dto);
 

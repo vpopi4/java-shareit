@@ -22,14 +22,9 @@ public class BookingController {
             @RequestHeader("X-Sharer-User-Id") Integer userId,
             @RequestBody BookingCreatingDto dto
     ) throws ClientException {
-        log.info("POST /bookings: creating booking: " +
-                "X-Sharer-User-Id={}, body={}", userId, dto);
+        log.info("---> Creating booking: userId={}, body={}", userId, dto);
 
-        BookingDto response = service.createBooking(userId, dto);
-
-        log.info("POST /bookings: response body={}", response);
-
-        return response;
+        return service.createBooking(userId, dto);
     }
 
     @PatchMapping("/{bookingId}")
@@ -38,14 +33,10 @@ public class BookingController {
             @PathVariable("bookingId") Integer bookingId,
             @RequestParam("approved") Boolean isApproved
     ) throws ClientException {
-        log.info("PATCH /bookings/{}: approving or rejecting booking: " +
-                "X-Sharer-User-Id={}, isApproved={}", bookingId, userId, isApproved);
+        log.info("---> {} booking: userId={}, bookingId={}",
+                isApproved ? "Approving" : "Rejecting", userId, bookingId);
 
-        BookingDto response = service.approveOrRejectBooking(userId, bookingId, isApproved);
-
-        log.info("PATCH /bookings/{}: response body={}", bookingId, response);
-
-        return response;
+        return service.approveOrRejectBooking(userId, bookingId, isApproved);
     }
 
     @GetMapping("/{bookingId}")
@@ -53,13 +44,7 @@ public class BookingController {
             @RequestHeader("X-Sharer-User-Id") Integer userId,
             @PathVariable("bookingId") Integer bookingId
     ) throws ClientException {
-        log.info("GET /bookings/{}: X-Sharer-User-Id={}", bookingId, userId);
-
-        BookingDto response = service.getBooking(userId, bookingId);
-
-        log.info("GET /bookings/{}: response body={}", bookingId, response);
-
-        return response;
+        return service.getBooking(userId, bookingId);
     }
 
     @GetMapping
@@ -67,14 +52,9 @@ public class BookingController {
             @RequestHeader("X-Sharer-User-Id") Integer userId,
             @RequestParam(value = "state", required = false) String state
     ) throws ClientException {
-        log.info("GET /bookings: getting bookings by booker and state: " +
-                "X-Sharer-User-Id={}, state={}", userId, state);
+        log.info("---> Getting bookings by booker: userId={}, state={}", userId, state);
 
-        List<BookingDto> response = service.getBookingsByBooker(userId, BookingState.parseString(state));
-
-        log.info("GET /bookings: response body={}", response);
-
-        return response;
+        return service.getBookingsByBooker(userId, BookingState.parseString(state));
     }
 
     @GetMapping("/owner")
@@ -82,13 +62,8 @@ public class BookingController {
             @RequestHeader("X-Sharer-User-Id") Integer userId,
             @RequestParam(value = "state", required = false) String state
     ) throws ClientException {
-        log.info("GET /bookings/owner: getting bookings by owner and state: " +
-                "X-Sharer-User-Id={}, state={}", userId, state);
+        log.info("---> Getting bookings by owner: userId={}, state={}", userId, state);
 
-        List<BookingDto> response = service.getBookingsByOwner(userId, BookingState.parseString(state));
-
-        log.info("GET /bookings/owner: response body={}", response);
-
-        return response;
+        return service.getBookingsByOwner(userId, BookingState.parseString(state));
     }
 }

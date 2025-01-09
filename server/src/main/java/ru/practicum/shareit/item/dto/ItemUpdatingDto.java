@@ -5,7 +5,7 @@ import lombok.Value;
 
 @Value
 @Builder
-public class ItemCreatingOrUpdatingDto {
+public class ItemUpdatingDto {
     String name;
     String description;
     Boolean available;

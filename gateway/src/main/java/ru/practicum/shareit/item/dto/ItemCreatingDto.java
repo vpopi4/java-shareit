@@ -11,5 +11,6 @@ public class ItemCreatingDto {
     @NotBlank String name;
     @NotBlank String description;
     @NotNull Boolean available;
+    Integer requestId;
 }
 

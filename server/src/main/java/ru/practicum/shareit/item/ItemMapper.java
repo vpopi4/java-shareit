@@ -3,28 +3,13 @@ package ru.practicum.shareit.item;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.ItemCreatingOrUpdatingDto;
 import ru.practicum.shareit.item.dto.ItemPublicDto;
 import ru.practicum.shareit.item.dto.ItemShortDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.model.User;
-
-import java.time.LocalDateTime;
 
 @Component
 public class ItemMapper {
-    public Item toItem(ItemCreatingOrUpdatingDto dto, User owner) {
-        return Item.builder()
-                .id(null)
-                .name(dto.getName())
-                .description(dto.getDescription())
-                .isAvailable(dto.getAvailable())
-                .owner(owner)
-                .createdAt(LocalDateTime.now())
-                .build();
-    }
-
     public ItemPublicDto toDto(Item item) {
         return toDto(item, null, null);
     }

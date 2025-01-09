@@ -8,12 +8,11 @@ import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.item.dto.CommentCreationDto;
-import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.ItemCreatingOrUpdatingDto;
-import ru.practicum.shareit.item.dto.ItemPublicDto;
+import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequestRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.util.BadRequestException;
@@ -36,14 +35,31 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
     private final ItemMapper map;
     private final BookingMapper bookingMapper;
 
     @Override
-    public ItemPublicDto createItem(Integer userId, ItemCreatingOrUpdatingDto dto) throws ClientException {
+    public ItemPublicDto createItem(Integer userId, ItemCreatingDto dto) throws ClientException {
         User user = findUser(userId);
+        ItemRequest itemRequest;
 
-        Item item = map.toItem(dto, user);
+        if (dto.getRequestId() != null) {
+            itemRequest = itemRequestRepository.findById(dto.getRequestId())
+                    .orElseThrow(() -> new NotFoundException("request not found"));
+        } else {
+            itemRequest = null;
+        }
+
+        Item item = Item.builder()
+                .id(null)
+                .name(dto.getName())
+                .description(dto.getDescription())
+                .isAvailable(dto.getAvailable())
+                .owner(user)
+                .createdAt(LocalDateTime.now())
+                .request(itemRequest)
+                .build();
 
         repository.save(item);
 
@@ -53,7 +69,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemPublicDto updatePartially(Integer userId,
                                          Integer itemId,
-                                         ItemCreatingOrUpdatingDto dto) throws ClientException {
+                                         ItemUpdatingDto dto) throws ClientException {
         User user = findUser(userId);
         Item item = findItem(itemId);
 

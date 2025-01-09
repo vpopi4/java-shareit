@@ -3,10 +3,7 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.dto.CommentCreationDto;
-import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.ItemCreatingOrUpdatingDto;
-import ru.practicum.shareit.item.dto.ItemPublicDto;
+import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.util.ClientException;
 
 import java.util.List;
@@ -21,7 +18,7 @@ public class ItemController {
     @PostMapping
     public ItemPublicDto createItem(
             @RequestHeader("X-Sharer-User-Id") Integer userId,
-            @RequestBody ItemCreatingOrUpdatingDto dto
+            @RequestBody ItemCreatingDto dto
     ) throws ClientException {
         log.info("---> Creating item: userId={}, body={}", userId, dto);
 
@@ -32,7 +29,7 @@ public class ItemController {
     public ItemPublicDto updatePartially(
             @RequestHeader("X-Sharer-User-Id") Integer userId,
             @PathVariable Integer itemId,
-            @RequestBody ItemCreatingOrUpdatingDto dto
+            @RequestBody ItemUpdatingDto dto
     ) throws ClientException {
         log.info("---> Editing item[id={}]: userId={}, body={}", itemId, userId, dto);
 

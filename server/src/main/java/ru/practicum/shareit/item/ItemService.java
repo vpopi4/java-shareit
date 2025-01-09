@@ -1,9 +1,6 @@
 package ru.practicum.shareit.item;
 
-import ru.practicum.shareit.item.dto.CommentCreationDto;
-import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.ItemCreatingOrUpdatingDto;
-import ru.practicum.shareit.item.dto.ItemPublicDto;
+import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.util.ClientException;
 
 import java.util.List;
@@ -17,7 +14,7 @@ public interface ItemService {
      * @return `ItemPublicDto` object
      */
     ItemPublicDto createItem(Integer userId,
-                             ItemCreatingOrUpdatingDto dto) throws ClientException;
+                             ItemCreatingDto dto) throws ClientException;
 
     /**
      * This method allows to partially update an existing `Item` by its owner.
@@ -29,7 +26,7 @@ public interface ItemService {
      */
     ItemPublicDto updatePartially(Integer userId,
                                   Integer itemId,
-                                  ItemCreatingOrUpdatingDto dto) throws ClientException;
+                                  ItemUpdatingDto dto) throws ClientException;
 
     /**
      * This method returns a public info about the `Item`.

@@ -53,7 +53,7 @@ public class ItemController {
     ) throws ClientException {
         log.info("--> GET /items/{}: userId={}", itemId, userId);
 
-        ResponseEntity<Object> response = client.getById(itemId);
+        ResponseEntity<Object> response = client.getById(itemId, userId);
 
         log.info("<-- GET /items/{}: response={}", itemId, response);
 

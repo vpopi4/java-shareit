@@ -36,8 +36,8 @@ public class ItemClient extends BaseClient {
         return patch("/" + itemId, userId, dto);
     }
 
-    public ResponseEntity<Object> getById(Integer itemId) {
-        return get("/" + itemId);
+    public ResponseEntity<Object> getById(Integer itemId, Integer userId) {
+        return get("/" + itemId, userId);
     }
 
     public ResponseEntity<Object> getAllByUserId(Integer userId) {

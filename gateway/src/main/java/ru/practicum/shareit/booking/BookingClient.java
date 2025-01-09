@@ -32,10 +32,8 @@ public class BookingClient extends BaseClient {
     }
 
     public ResponseEntity<Object> approveOrRejectBooking(Integer userId, Integer bookingId, Boolean approved) {
-        return patch("/{bookingId}?approved={approved}", userId, Map.of(
-                "bookingId", bookingId,
-                "approved", approved
-        ));
+        String url = String.format("/%d?approved=%b", bookingId, approved);
+        return patch(url, userId);
     }
 
     public ResponseEntity<Object> getBookings(Integer userId, BookingState state) {

@@ -4,13 +4,11 @@ import lombok.Builder;
 import lombok.Value;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Value
 @Builder
-public class ItemRequestDto {
+public class ItemRequestShortDto {
     Integer id;
     String description;
     LocalDateTime created;
-    List<ItemShortDto> items;
 }

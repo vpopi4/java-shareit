@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 @Builder
 public class ErrorResponse<P> {
     HttpStatus status;
+    String error;
     String message;
     P payload;
 }

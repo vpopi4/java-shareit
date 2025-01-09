@@ -15,9 +15,10 @@ import java.util.Map;
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
-    private ResponseEntity<Object> buildResponseEntity(HttpStatus status, String message) {
+    private ResponseEntity<Object> buildResponseEntity(HttpStatus status, String errorName, String message) {
         var res = ErrorResponse.builder()
                 .status(status)
+                .error(errorName)
                 .message(message)
                 .build();
 
@@ -28,7 +29,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleClientException(ClientException ex, WebRequest request) {
         log.warn("Client exception occurred: ", ex);
 
-        return buildResponseEntity(ex.getHttpStatus(), ex.getMessage());
+        return buildResponseEntity(ex.getHttpStatus(), ex.getClass().getName(), ex.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -44,6 +45,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(
                 ErrorResponse.builder()
                         .status(HttpStatus.BAD_REQUEST)
+                        .error("ValidationError")
                         .message("validation errors occurred")
                         .payload(errors)
                         .build(),
@@ -54,6 +56,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<Object> handleRuntimeException(Throwable ex, WebRequest request) {
         log.error("Internal server error: ", ex);
-        return buildResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        return buildResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, "InternalServerError", ex.getMessage());
     }
 }

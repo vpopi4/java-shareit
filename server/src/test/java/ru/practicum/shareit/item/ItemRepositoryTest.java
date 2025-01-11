@@ -71,12 +71,12 @@ class ItemRepositoryTest {
         User user2 = entityManager.persistAndFlush(dataGenerator.getUser(null));
         User user3 = entityManager.persistAndFlush(dataGenerator.getUser(null));
 
-        Item item1_1 = entityManager.persistAndFlush(dataGenerator.getItem(null, user1, null));
-        Item item1_2 = entityManager.persistAndFlush(dataGenerator.getItem(null, user1, null));
-        Item item1_3 = entityManager.persistAndFlush(dataGenerator.getItem(null, user1, null));
+        Item item1 = entityManager.persistAndFlush(dataGenerator.getItem(null, user1, null));
+        Item item2 = entityManager.persistAndFlush(dataGenerator.getItem(null, user1, null));
+        Item item3 = entityManager.persistAndFlush(dataGenerator.getItem(null, user1, null));
 
-        Item item2_1 = entityManager.persistAndFlush(dataGenerator.getItem(null, user2, null));
-        Item item3_1 = entityManager.persistAndFlush(dataGenerator.getItem(null, user3, null));
+        entityManager.persistAndFlush(dataGenerator.getItem(null, user2, null));
+        entityManager.persistAndFlush(dataGenerator.getItem(null, user3, null));
 
         // Act
         List<Item> items = itemRepository.findByOwnerId(user1.getId());
@@ -84,9 +84,9 @@ class ItemRepositoryTest {
         // Assert
         assertEquals(3, items.size());
 
-        assertTrue(items.stream().anyMatch(item -> item.getId().equals(item1_1.getId())));
-        assertTrue(items.stream().anyMatch(item -> item.getId().equals(item1_2.getId())));
-        assertTrue(items.stream().anyMatch(item -> item.getId().equals(item1_3.getId())));
+        assertTrue(items.stream().anyMatch(item -> item.getId().equals(item1.getId())));
+        assertTrue(items.stream().anyMatch(item -> item.getId().equals(item2.getId())));
+        assertTrue(items.stream().anyMatch(item -> item.getId().equals(item3.getId())));
 
         for (Item item : items) {
             assertEquals(user1.getId(), item.getOwner().getId());

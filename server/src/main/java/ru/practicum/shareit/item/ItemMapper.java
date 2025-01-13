@@ -20,10 +20,10 @@ public class ItemMapper {
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getIsAvailable())
-                .comments(item.getComments()
+                .comments(item.getComments() != null ? item.getComments()
                         .stream()
                         .map(this::toCommentDto)
-                        .toList())
+                        .toList() : null)
                 .lastBooking(last)
                 .nextBooking(next)
                 .build();

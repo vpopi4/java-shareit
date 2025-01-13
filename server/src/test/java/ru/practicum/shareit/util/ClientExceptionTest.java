@@ -3,7 +3,7 @@ package ru.practicum.shareit.util;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ClientExceptionTest {
     @Test

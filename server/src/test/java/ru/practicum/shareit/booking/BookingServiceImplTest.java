@@ -32,6 +32,14 @@ class BookingServiceImplTest {
     private BookingService bookingService;
     private DataGenerator dataGenerator;
 
+    private static BookingCreatingDto getBookingCreatingDto(Integer itemId) {
+        return BookingCreatingDto.builder()
+                .itemId(itemId)
+                .start(LocalDateTime.now().plusDays(1))
+                .end(LocalDateTime.now().plusDays(2))
+                .build();
+    }
+
     @BeforeEach
     void setUp() {
         bookingRepository = Mockito.mock(BookingRepository.class);
@@ -222,7 +230,6 @@ class BookingServiceImplTest {
         verify(bookingRepository, times(1)).findById(booking.getId());
     }
 
-
     @Test
     void getBooking_shouldThrowForbiddenException_whenUserIsNotOwnerOrBooker() {
         // Arrange
@@ -241,14 +248,6 @@ class BookingServiceImplTest {
                 ClientException.class,
                 () -> bookingService.getBooking(userId, booking.getId())
         );
-    }
-
-    private static BookingCreatingDto getBookingCreatingDto(Integer itemId) {
-        return BookingCreatingDto.builder()
-                .itemId(itemId)
-                .start(LocalDateTime.now().plusDays(1))
-                .end(LocalDateTime.now().plusDays(2))
-                .build();
     }
 
     @Test

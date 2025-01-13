@@ -24,6 +24,14 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     private final ItemRequestRepository repository;
     private final UserRepository userRepository;
 
+    private static ItemShortDto getItemShortDto(Item item) {
+        return ItemShortDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .ownerId(item.getOwner().getId())
+                .build();
+    }
+
     @Override
     public ItemRequestShortDto createItemRequest(Integer userId,
                                                  ItemRequestCreationDto dto) throws ClientException {
@@ -93,14 +101,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                         .stream()
                         .map(ItemRequestServiceImpl::getItemShortDto)
                         .toList())
-                .build();
-    }
-
-    private static ItemShortDto getItemShortDto(Item item) {
-        return ItemShortDto.builder()
-                .id(item.getId())
-                .name(item.getName())
-                .ownerId(item.getOwner().getId())
                 .build();
     }
 }

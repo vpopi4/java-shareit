@@ -9,11 +9,10 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 
 class GlobalExceptionHandlerTest {
 
@@ -39,7 +38,7 @@ class GlobalExceptionHandlerTest {
         // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertTrue(response.getBody() instanceof ErrorResponse);
+        assertInstanceOf(ErrorResponse.class, response.getBody());
 
         ErrorResponse<Object> errorResponse = (ErrorResponse) response.getBody();
         assertEquals("ru.practicum.shareit.util.BadRequestException", errorResponse.getError());
@@ -61,7 +60,7 @@ class GlobalExceptionHandlerTest {
         // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertTrue(response.getBody() instanceof ErrorResponse);
+        assertInstanceOf(ErrorResponse.class, response.getBody());
 
         ErrorResponse<Object> errorResponse = (ErrorResponse) response.getBody();
         assertEquals("ValidationError", errorResponse.getError());
@@ -89,7 +88,7 @@ class GlobalExceptionHandlerTest {
         // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertTrue(response.getBody() instanceof ErrorResponse);
+        assertInstanceOf(ErrorResponse.class, response.getBody());
 
         ErrorResponse errorResponse = (ErrorResponse) response.getBody();
         assertEquals("InternalServerError", errorResponse.getError());

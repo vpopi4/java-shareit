@@ -18,7 +18,7 @@ public class ItemMapper {
         Integer requestId = null;
 
         if (item.getRequest() != null) {
-            requestId = item .getRequest().getId();
+            requestId = item.getRequest().getId();
         }
 
         return ItemPublicDto.builder()

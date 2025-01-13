@@ -13,6 +13,8 @@ public class ItemPublicDto {
     String name;
     String description;
     Boolean available;
+
+    Integer requestId;
     List<CommentDto> comments;
     BookingDto lastBooking;
     BookingDto nextBooking;

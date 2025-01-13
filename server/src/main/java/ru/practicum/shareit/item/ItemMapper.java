@@ -15,11 +15,18 @@ public class ItemMapper {
     }
 
     public ItemPublicDto toDto(Item item, BookingDto last, BookingDto next) {
+        Integer requestId = null;
+
+        if (item.getRequest() != null) {
+            requestId = item .getRequest().getId();
+        }
+
         return ItemPublicDto.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getIsAvailable())
+                .requestId(requestId)
                 .comments(item.getComments() != null ? item.getComments()
                         .stream()
                         .map(this::toCommentDto)

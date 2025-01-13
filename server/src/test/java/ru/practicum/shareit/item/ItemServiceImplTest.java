@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingRepository;
-import ru.practicum.shareit.item.dto.ItemCreatingDto;
-import ru.practicum.shareit.item.dto.ItemPublicDto;
-import ru.practicum.shareit.item.dto.ItemUpdatingDto;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -18,6 +18,8 @@ import ru.practicum.shareit.util.ClientException;
 import ru.practicum.shareit.util.DataGenerator;
 import ru.practicum.shareit.util.NotFoundException;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -328,6 +330,148 @@ class ItemServiceImplTest {
         );
 
         verify(itemRepository, times(1)).findByIdWithComments(itemId);
+    }
+
+    @Test
+    void getAllByUserId_shouldReturnItemsWithBookings_whenItemsExist() {
+        // Arrange
+        User user = dataGenerator.getUser(dataGenerator.getNextId());
+        Item item1 = dataGenerator.getItem(dataGenerator.getNextId(), user, null);
+        Item item2 = dataGenerator.getItem(dataGenerator.getNextId(), user, null);
+
+        Booking lastBooking1 = dataGenerator.getBooking(dataGenerator.getNextId(), item1, user);
+        Booking nextBooking1 = dataGenerator.getBooking(dataGenerator.getNextId(), item1, user);
+        Booking lastBooking2 = dataGenerator.getBooking(dataGenerator.getNextId(), item2, user);
+
+        when(itemRepository.findByOwnerId(user.getId())).thenReturn(List.of(item1, item2));
+        when(bookingRepository.findLatestBooking(item1.getId())).thenReturn(lastBooking1);
+        when(bookingRepository.findNextBooking(item1.getId())).thenReturn(nextBooking1);
+        when(bookingRepository.findLatestBooking(item2.getId())).thenReturn(lastBooking2);
+        when(bookingRepository.findNextBooking(item2.getId())).thenReturn(null);
+
+        // Act
+        List<ItemPublicDto> items = itemService.getAllByUserId(user.getId());
+
+        // Assert
+        assertNotNull(items);
+        assertEquals(2, items.size());
+        assertEquals(lastBooking1.getId(), items.get(0).getLastBooking().getId());
+        assertEquals(nextBooking1.getId(), items.get(0).getNextBooking().getId());
+        assertEquals(lastBooking2.getId(), items.get(1).getLastBooking().getId());
+        assertNull(items.get(1).getNextBooking());
+        verify(itemRepository, times(1)).findByOwnerId(user.getId());
+        verify(bookingRepository, times(1)).findLatestBooking(item1.getId());
+        verify(bookingRepository, times(1)).findNextBooking(item1.getId());
+        verify(bookingRepository, times(1)).findLatestBooking(item2.getId());
+    }
+
+    @Test
+    void getAllByUserId_shouldReturnEmptyList_whenNoItemsExist() {
+        // Arrange
+        int userId = 1;
+        when(itemRepository.findByOwnerId(userId)).thenReturn(Collections.emptyList());
+
+        // Act
+        List<ItemPublicDto> items = itemService.getAllByUserId(userId);
+
+        // Assert
+        assertNotNull(items);
+        assertTrue(items.isEmpty());
+        verify(itemRepository, times(1)).findByOwnerId(userId);
+    }
+
+    @Test
+    void search_shouldReturnItems_whenTextIsProvided() {
+        // Arrange
+        String searchText = "item";
+        Item item = dataGenerator.getItem(dataGenerator.getNextId(), null, null);
+
+        when(itemRepository.findByText(searchText)).thenReturn(List.of(item));
+
+        // Act
+        List<ItemPublicDto> items = itemService.search(searchText);
+
+        // Assert
+        assertNotNull(items);
+        assertEquals(1, items.size());
+        assertEquals(item.getId(), items.get(0).getId());
+        verify(itemRepository, times(1)).findByText(searchText);
+    }
+
+    @Test
+    void search_shouldReturnEmptyList_whenTextIsBlank() {
+        // Arrange
+        String searchText = " ";
+
+        // Act
+        List<ItemPublicDto> items = itemService.search(searchText);
+
+        // Assert
+        assertNotNull(items);
+        assertTrue(items.isEmpty());
+        verify(itemRepository, never()).findByText(anyString());
+    }
+
+    @Test
+    void search_shouldReturnEmptyList_whenNoItemsMatch() {
+        // Arrange
+        String searchText = "item";
+        when(itemRepository.findByText(searchText)).thenReturn(Collections.emptyList());
+
+        // Act
+        List<ItemPublicDto> items = itemService.search(searchText);
+
+        // Assert
+        assertNotNull(items);
+        assertTrue(items.isEmpty());
+        verify(itemRepository, times(1)).findByText(searchText);
+    }
+
+    @Test
+    void postComment_shouldCreateComment_whenBookingExists() throws ClientException {
+        // Arrange
+        User user = dataGenerator.getUser(dataGenerator.getNextId());
+        Item item = dataGenerator.getItem(dataGenerator.getNextId(), user, null);
+        CommentCreationDto dto = new CommentCreationDto("Great item!");
+
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
+        when(bookingRepository.findPastBookingsByBookerAndItem(user.getId(), item.getId()))
+                .thenReturn(List.of(dataGenerator.getBooking(dataGenerator.getNextId(), item, user)));
+        when(commentRepository.save(any(Comment.class))).thenAnswer(invocationOnMock -> {
+            Comment comment = invocationOnMock.getArgument(0);
+            comment.setId(dataGenerator.getNextId());
+            return comment;
+        });
+
+        // Act
+        CommentDto result = itemService.postComment(user.getId(), item.getId(), dto);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(dto.getText(), result.getText());
+        verify(commentRepository, times(1)).save(any(Comment.class));
+    }
+
+    @Test
+    void postComment_shouldThrowBadRequestException_whenNoBookingsExist() {
+        // Arrange
+        User user = dataGenerator.getUser(dataGenerator.getNextId());
+        Item item = dataGenerator.getItem(dataGenerator.getNextId(), user, null);
+        CommentCreationDto dto = new CommentCreationDto("Great item!");
+
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
+        when(bookingRepository.findPastBookingsByBookerAndItem(user.getId(), item.getId()))
+                .thenReturn(Collections.emptyList());
+
+        // Act & Assert
+        assertThrows(
+                ClientException.class,
+                () -> itemService.postComment(user.getId(), item.getId(), dto)
+        );
+
+        verify(commentRepository, never()).save(any(Comment.class));
     }
 
     private ItemCreatingDto getItemCreatingDto() {

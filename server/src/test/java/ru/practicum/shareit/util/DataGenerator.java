@@ -100,8 +100,11 @@ public class DataGenerator {
                 .toLocalDateTime();
     }
 
+    public String getLorem(int words) {
+        return String.join(" ", faker.lorem().words(words));
+    }
+
     public Integer getNextId() {
         return ++seq;
     }
-
 }

@@ -3,6 +3,7 @@ package ru.practicum.shareit.request;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestCreationDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestShortDto;
@@ -58,11 +59,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                         .created(request.getCreatedAt())
                         .items(request.getItems()
                                 .stream()
-                                .map((item) -> ItemShortDto.builder()
-                                        .id(item.getId())
-                                        .name(item.getName())
-                                        .ownerId(item.getOwner().getId())
-                                        .build())
+                                .map(ItemRequestServiceImpl::getItemShortDto)
                                 .toList())
                         .build())
                 .toList();
@@ -94,12 +91,16 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 .created(request.getCreatedAt())
                 .items(request.getItems()
                         .stream()
-                        .map((item) -> ItemShortDto.builder()
-                                .id(item.getId())
-                                .name(item.getName())
-                                .ownerId(item.getOwner().getId())
-                                .build())
+                        .map(ItemRequestServiceImpl::getItemShortDto)
                         .toList())
+                .build();
+    }
+
+    private static ItemShortDto getItemShortDto(Item item) {
+        return ItemShortDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .ownerId(item.getOwner().getId())
                 .build();
     }
 }

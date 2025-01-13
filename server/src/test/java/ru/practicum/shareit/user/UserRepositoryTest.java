@@ -14,7 +14,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DataJpaTest
+@DataJpaTest(showSql = false)
 @ExtendWith(SpringExtension.class)
 class UserRepositoryTest {
     private final DataGenerator dataGenerator = new DataGenerator();

@@ -17,7 +17,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DataJpaTest
+@DataJpaTest(showSql = false)
 @ExtendWith(SpringExtension.class)
 class ItemRequestRepositoryTest {
     private final DataGenerator dataGenerator = new DataGenerator();

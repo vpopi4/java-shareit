@@ -61,7 +61,7 @@ public class ItemServiceImpl implements ItemService {
                 .request(itemRequest)
                 .build();
 
-        repository.save(item);
+        item = repository.save(item);
 
         return map.toDto(item);
     }
@@ -89,7 +89,7 @@ public class ItemServiceImpl implements ItemService {
             item.setIsAvailable(dto.getAvailable());
         }
 
-        repository.save(item);
+        item = repository.save(item);
 
         return map.toDto(item);
     }

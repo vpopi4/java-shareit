@@ -11,6 +11,7 @@ import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 public class DataGenerator {
@@ -50,6 +51,7 @@ public class DataGenerator {
                 .description(getItemDescription())
                 .requester(requester)
                 .createdAt(getPastLocalDateTime())
+                .items(Collections.emptyList())
                 .build();
     }
 

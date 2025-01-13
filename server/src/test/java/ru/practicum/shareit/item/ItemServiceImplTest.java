@@ -10,6 +10,7 @@ import ru.practicum.shareit.item.dto.ItemPublicDto;
 import ru.practicum.shareit.item.dto.ItemUpdatingDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.ItemRequestRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
@@ -92,6 +93,63 @@ class ItemServiceImplTest {
         verify(itemRepository, never()).save(any(Item.class));
     }
 
+    @Test
+    void createItem_shouldCreateItemWithRequest_whenRequestIdIsProvided() throws ClientException {
+        // Arrange
+        User user = dataGenerator.getUser(dataGenerator.getNextId());
+        ItemRequest itemRequest = dataGenerator.getItemRequest(dataGenerator.getNextId(), user);
+        ItemCreatingDto dto = ItemCreatingDto.builder()
+                .name("Item name")
+                .description("Item description")
+                .available(true)
+                .requestId(itemRequest.getId())
+                .build();
+
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(itemRequestRepository.findById(itemRequest.getId())).thenReturn(Optional.of(itemRequest));
+        when(itemRepository.save(any(Item.class))).thenAnswer(invocationOnMock -> {
+            Item returnedItem = invocationOnMock.getArgument(0);
+            returnedItem.setId(dataGenerator.getNextId());
+            return returnedItem;
+        });
+
+        // Act
+        ItemPublicDto result = itemService.createItem(user.getId(), dto);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(dto.getName(), result.getName());
+        assertEquals(dto.getDescription(), result.getDescription());
+        assertEquals(dto.getAvailable(), result.getAvailable());
+        assertEquals(itemRequest.getId(), result.getRequestId());
+        verify(itemRepository, times(1)).save(any(Item.class));
+        verify(itemRequestRepository, times(1)).findById(itemRequest.getId());
+    }
+
+    @Test
+    void createItem_shouldThrowNotFoundException_whenRequestIdDoesNotExist() {
+        // Arrange
+        User user = dataGenerator.getUser(dataGenerator.getNextId());
+        int nonExistentRequestId = dataGenerator.getNextId();
+        ItemCreatingDto dto = ItemCreatingDto.builder()
+                .name("Item name")
+                .description("Item description")
+                .available(true)
+                .requestId(nonExistentRequestId)
+                .build();
+
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(itemRequestRepository.findById(nonExistentRequestId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(
+                NotFoundException.class,
+                () -> itemService.createItem(user.getId(), dto)
+        );
+
+        verify(itemRepository, never()).save(any(Item.class));
+        verify(itemRequestRepository, times(1)).findById(nonExistentRequestId);
+    }
 
     @Test
     void updatePartially_shouldUpdateItem_whenUserIsOwner() throws ClientException {
@@ -133,6 +191,107 @@ class ItemServiceImplTest {
         assertThrows(
                 ClientException.class,
                 () -> itemService.updatePartially(notAnOwner.getId(), item.getId(), dto)
+        );
+
+        verify(itemRepository, never()).save(any(Item.class));
+    }
+
+    @Test
+    void updatePartially_shouldNotUpdateName_whenNameIsNull() throws ClientException {
+        // Arrange
+        User user = dataGenerator.getUser(dataGenerator.getNextId());
+        Item item = dataGenerator.getItem(dataGenerator.getNextId(), user, null);
+
+        ItemUpdatingDto dto = ItemUpdatingDto.builder()
+                .name(null)
+                .description("Updated description")
+                .available(true)
+                .build();
+
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
+        when(itemRepository.save(any(Item.class))).thenReturn(item);
+
+        // Act
+        ItemPublicDto result = itemService.updatePartially(user.getId(), item.getId(), dto);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(item.getName(), result.getName());
+        assertEquals(dto.getDescription(), result.getDescription());
+        assertEquals(dto.getAvailable(), result.getAvailable());
+        verify(itemRepository, times(1)).save(item);
+    }
+
+    @Test
+    void updatePartially_shouldNotUpdateDescription_whenDescriptionIsNull() throws ClientException {
+        // Arrange
+        User user = dataGenerator.getUser(dataGenerator.getNextId());
+        Item item = dataGenerator.getItem(dataGenerator.getNextId(), user, null);
+
+        ItemUpdatingDto dto = ItemUpdatingDto.builder()
+                .name("Updated name")
+                .description(null)
+                .available(true)
+                .build();
+
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
+        when(itemRepository.save(any(Item.class))).thenReturn(item);
+
+        // Act
+        ItemPublicDto result = itemService.updatePartially(user.getId(), item.getId(), dto);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(dto.getName(), result.getName());
+        assertEquals(item.getDescription(), result.getDescription());
+        assertEquals(dto.getAvailable(), result.getAvailable());
+        verify(itemRepository, times(1)).save(item);
+    }
+
+    @Test
+    void updatePartially_shouldNotUpdateAvailable_whenAvailableIsNull() throws ClientException {
+        // Arrange
+        User user = dataGenerator.getUser(dataGenerator.getNextId());
+        Item item = dataGenerator.getItem(dataGenerator.getNextId(), user, null);
+
+        ItemUpdatingDto dto = ItemUpdatingDto.builder()
+                .name("Updated name")
+                .description("Updated description")
+                .available(null)
+                .build();
+
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
+        when(itemRepository.save(any(Item.class))).thenReturn(item);
+
+        // Act
+        ItemPublicDto result = itemService.updatePartially(user.getId(), item.getId(), dto);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(dto.getName(), result.getName());
+        assertEquals(dto.getDescription(), result.getDescription());
+        assertEquals(item.getIsAvailable(), result.getAvailable());
+        verify(itemRepository, times(1)).save(item);
+    }
+
+    @Test
+    void updatePartially_shouldThrowNotFoundException_whenItemDoesNotExist() {
+        // Arrange
+        User user = dataGenerator.getUser(dataGenerator.getNextId());
+        int itemId = dataGenerator.getNextId();
+
+        ItemUpdatingDto dto = getItemUpdatingDto();
+
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(itemRepository.findById(itemId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(
+                NotFoundException.class,
+                () -> itemService.updatePartially(user.getId(), itemId, dto)
         );
 
         verify(itemRepository, never()).save(any(Item.class));

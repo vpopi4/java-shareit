@@ -144,6 +144,79 @@ class UserServiceTest {
     }
 
     @Test
+    void updatePartially_shouldNotUpdateEmail_whenEmailIsNull() throws ClientException {
+        // Arrange
+        User existingUser = dataGenerator.getUser(dataGenerator.getNextId());
+        User updatedUser = dataGenerator.getUser(existingUser.getId());
+        updatedUser.setEmail(existingUser.getEmail());
+        updatedUser.setCreatedAt(existingUser.getCreatedAt());
+
+        UserUpdatingDto dto = UserUpdatingDto.builder()
+                .name(updatedUser.getName())
+                .email(null)
+                .build();
+
+        when(userRepository.findById(existingUser.getId())).thenReturn(Optional.of(existingUser));
+        when(userRepository.save(any(User.class))).thenReturn(updatedUser);
+
+        // Act
+        PublicUserDto result = userService.updatePartially(existingUser.getId(), dto);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(existingUser.getEmail(), result.getEmail());
+        assertEquals(updatedUser.getName(), result.getName());
+        verify(userRepository, times(1)).save(existingUser);
+    }
+
+    @Test
+    void updatePartially_shouldNotUpdateName_whenNameIsNull() throws ClientException {
+        // Arrange
+        User existingUser = dataGenerator.getUser(dataGenerator.getNextId());
+        User updatedUser = dataGenerator.getUser(existingUser.getId());
+        updatedUser.setName(existingUser.getName());
+        updatedUser.setCreatedAt(existingUser.getCreatedAt());
+
+        UserUpdatingDto dto = UserUpdatingDto.builder()
+                .name(null)
+                .email(updatedUser.getEmail())
+                .build();
+
+        when(userRepository.findById(existingUser.getId())).thenReturn(Optional.of(existingUser));
+        when(userRepository.save(any(User.class))).thenReturn(updatedUser);
+
+        // Act
+        PublicUserDto result = userService.updatePartially(existingUser.getId(), dto);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(updatedUser.getEmail(), result.getEmail());
+        assertEquals(existingUser.getName(), result.getName()); // Name не должен измениться
+        verify(userRepository, times(1)).save(existingUser);
+    }
+
+    @Test
+    void updatePartially_shouldThrowNotFoundException_whenUserDoesNotExist() {
+        // Arrange
+        Integer userId = dataGenerator.getNextId();
+        UserUpdatingDto dto = UserUpdatingDto.builder()
+                .name("New Name")
+                .email("new.email@example.com")
+                .build();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        ClientException exception = assertThrows(
+                ClientException.class,
+                () -> userService.updatePartially(userId, dto)
+        );
+
+        assertEquals("user with such id not found", exception.getMessage());
+        verify(userRepository, never()).save(any(User.class));
+    }
+
+    @Test
     void deleteById_shouldDeleteUser_whenUserExists() {
         // Arrange
         User user = dataGenerator.getUser(dataGenerator.getNextId());

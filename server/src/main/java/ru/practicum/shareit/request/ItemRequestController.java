@@ -37,10 +37,13 @@ public class ItemRequestController {
     }
 
     @GetMapping("/all")
-    public List<ItemRequestShortDto> findAll() throws ClientException {
-        log.info("---> Getting all item requests");
+    public List<ItemRequestShortDto> findAll(
+            @RequestParam(name = "size", required = false, defaultValue = "10") Integer size,
+            @RequestParam(name = "from", required = false, defaultValue = "0") Integer from
+    ) throws ClientException {
+        log.info("---> Getting {} item requests from {} index", size, from);
 
-        return service.findAll();
+        return service.findAll(from, size);
     }
 
     @GetMapping("/{requestId}")

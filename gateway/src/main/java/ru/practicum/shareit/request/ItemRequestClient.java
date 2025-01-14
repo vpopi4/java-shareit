@@ -32,8 +32,8 @@ public class ItemRequestClient extends BaseClient {
         return get("", userId);
     }
 
-    public ResponseEntity<Object> findAll() {
-        return get("/all");
+    public ResponseEntity<Object> findAll(Integer size, Integer from) {
+        return get("/all?from=%d&size=%d".formatted(from, size));
     }
 
     public ResponseEntity<Object> findById(Integer requestId) {

@@ -74,9 +74,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public List<ItemRequestShortDto> findAll() throws ClientException {
+    public List<ItemRequestShortDto> findAll(Integer from, Integer size) throws ClientException {
         return repository
-                .findAllOrderByCreatedAtDesc()
+                .findAllOrderByCreatedAtDesc(from, size)
                 .stream()
                 .map((request) -> ItemRequestShortDto.builder()
                         .id(request.getId())

@@ -72,7 +72,7 @@ class ItemRequestRepositoryTest {
         request3 = entityManager.persist(request3);
 
         // Act
-        List<ItemRequest> requests = itemRequestRepository.findAllOrderByCreatedAtDesc();
+        List<ItemRequest> requests = itemRequestRepository.findAllOrderByCreatedAtDesc(0, 10);
 
         // Assert
         assertNotNull(requests);

@@ -17,8 +17,10 @@ public interface ItemRequestRepository extends JpaRepository<ItemRequest, Intege
 
     @Query("SELECT r " +
             "FROM ItemRequest r " +
-            "ORDER BY r.createdAt DESC")
-    List<ItemRequest> findAllOrderByCreatedAtDesc();
+            "ORDER BY r.createdAt DESC " +
+            "LIMIT :size OFFSET :from")
+    List<ItemRequest> findAllOrderByCreatedAtDesc(@Param("from") Integer from,
+                                                  @Param("size") Integer size);
 
     @Query("SELECT r " +
             "FROM ItemRequest r " +

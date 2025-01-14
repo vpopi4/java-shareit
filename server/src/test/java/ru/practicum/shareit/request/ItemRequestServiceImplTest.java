@@ -112,10 +112,10 @@ class ItemRequestServiceImplTest {
         User user = dataGenerator.getUser(dataGenerator.getNextId());
         ItemRequest request = dataGenerator.getItemRequest(dataGenerator.getNextId(), user);
 
-        when(itemRequestRepository.findAllOrderByCreatedAtDesc()).thenReturn(List.of(request));
+        when(itemRequestRepository.findAllOrderByCreatedAtDesc(0, 10)).thenReturn(List.of(request));
 
         // Act
-        List<ItemRequestShortDto> result = itemRequestService.findAll();
+        List<ItemRequestShortDto> result = itemRequestService.findAll(0, 10);
 
         // Assert
         assertNotNull(result);

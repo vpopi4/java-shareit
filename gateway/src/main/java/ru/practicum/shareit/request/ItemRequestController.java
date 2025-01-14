@@ -40,10 +40,13 @@ public class ItemRequestController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Object> findAll() throws ClientException {
-        log.info("--> GET /requests/all");
+    public ResponseEntity<Object> findAll(
+            @RequestParam(name = "size", required = false, defaultValue = "10") Integer size,
+            @RequestParam(name = "from", required = false, defaultValue = "0") Integer from
+    ) throws ClientException {
+        log.info("--> GET /requests/all?from={}&size={}", from, size);
 
-        ResponseEntity<Object> response = itemRequestClient.findAll();
+        ResponseEntity<Object> response = itemRequestClient.findAll(size, from);
 
         log.info("<-- GET /requests/all: response={}", response);
         return response;

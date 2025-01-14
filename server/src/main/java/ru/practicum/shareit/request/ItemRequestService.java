@@ -13,7 +13,7 @@ public interface ItemRequestService {
 
     List<ItemRequestDto> findAllByUserId(Integer userId) throws ClientException;
 
-    List<ItemRequestShortDto> findAll() throws ClientException;
+    List<ItemRequestShortDto> findAll(Integer from, Integer size) throws ClientException;
 
     ItemRequestDto findById(Integer requestId) throws ClientException;
 }

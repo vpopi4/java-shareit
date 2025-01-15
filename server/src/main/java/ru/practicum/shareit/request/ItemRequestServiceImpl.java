@@ -15,7 +15,10 @@ import ru.practicum.shareit.util.ClientException;
 import ru.practicum.shareit.util.NotFoundException;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -58,8 +61,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("user not found"));
 
-        return repository
-                .findAllByRequesterId(userId)
+        List<ItemRequest> requests = repository.findAllByRequesterId(userId);
+
+        return linkItems(requests)
                 .stream()
                 .map((request) -> ItemRequestDto.builder()
                         .id(request.getId())
@@ -88,10 +92,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public ItemRequestDto findById(Integer requestId) throws ClientException {
-        ItemRequest request = repository.findByIdWithItems(requestId)
+        ItemRequest request = repository.findById(requestId)
                 .orElseThrow(() -> new NotFoundException("request not found"));
-
-        log.info("item request = {}", request);
 
         return ItemRequestDto.builder()
                 .id(request.getId())
@@ -102,5 +104,23 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                         .map(ItemRequestServiceImpl::getItemShortDto)
                         .toList())
                 .build();
+    }
+
+    private List<ItemRequest> linkItems(List<ItemRequest> requests) {
+        List<Item> items = repository.findItemsByRequestIds(
+                requests
+                        .stream()
+                        .map(ItemRequest::getId)
+                        .toList()
+        );
+
+        Map<Integer, List<Item>> itemsByRequestId = items.stream()
+                .collect(Collectors.groupingBy(item -> item.getRequest().getId()));
+
+        for (ItemRequest request : requests) {
+            request.setItems(itemsByRequestId.getOrDefault(request.getId(), Collections.emptyList()));
+        }
+
+        return requests;
     }
 }

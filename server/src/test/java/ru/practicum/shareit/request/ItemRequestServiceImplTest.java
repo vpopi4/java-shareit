@@ -136,7 +136,7 @@ class ItemRequestServiceImplTest {
 
         request.setItems(List.of(item1, item2)); // Устанавливаем список items
 
-        when(itemRequestRepository.findByIdWithItems(requestId)).thenReturn(Optional.of(request));
+        when(itemRequestRepository.findById(requestId)).thenReturn(Optional.of(request));
 
         // Act
         ItemRequestDto result = itemRequestService.findById(requestId);
@@ -147,7 +147,7 @@ class ItemRequestServiceImplTest {
         assertEquals(2, result.getItems().size());
         assertEquals(item1.getName(), result.getItems().get(0).getName());
         assertEquals(item2.getName(), result.getItems().get(1).getName());
-        verify(itemRequestRepository, times(1)).findByIdWithItems(requestId);
+        verify(itemRequestRepository, times(1)).findById(requestId);
     }
 
     @Test
